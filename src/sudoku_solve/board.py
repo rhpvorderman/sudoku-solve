@@ -33,7 +33,7 @@ def squares_sets() -> List[Set[Tuple[int, int]]]:
 SQUARES_SETS = squares_sets()
 
 
-def in_square_set(coordinate: Tuple[int,int]) -> Set[Tuple[int, int]]:
+def in_square_set(coordinate: Tuple[int, int]) -> Set[Tuple[int, int]]:
     for square_set in SQUARES_SETS:
         if coordinate in square_set:
             return square_set
@@ -50,17 +50,19 @@ class Cell(object):
 
     def update_with_fixed(self, fixed_set: Set[int]):
         """"""
-        self.possible_values -= fixed_set
-        self.fix_if_certain()
+        if self.fixed_value is not None:
+            self.possible_values -= fixed_set
+            self.fix_if_certain()
 
     def update_with_possible(self, possible_set: Set[Set[int]]):
-        possible_values_in_other_cells = {}
-        for values in possible_set:
-            possible_values_in_other_cells.update(values)
-        must_be_one_of = self.possible_values - possible_values_in_other_cells
-        if len(must_be_one_of) > 0:
-            self.possible_values = must_be_one_of
-            self.fix_if_certain()
+        if self.fixed_value is not None:
+            possible_values_in_other_cells = {}
+            for values in possible_set:
+                possible_values_in_other_cells.update(values)
+            must_be_one_of = self.possible_values - possible_values_in_other_cells
+            if len(must_be_one_of) > 0:
+                self.possible_values = must_be_one_of
+                self.fix_if_certain()
 
     def fix_if_certain(self):
         if self.fixed_value is not None and len(self.possible_values) == 1:
@@ -119,3 +121,29 @@ class Board(object):
                     square_set
                 ]
         return sets_dict
+
+    def coordinates_to_fixed_set(
+            self, coordinates: Set[Tuple[int, int]]) -> Set[int]:
+        fixed_set = set(
+            [self[coordinate].fixed_value for coordinate in coordinates])
+        fixed_set.discard(None)
+        return fixed_set
+
+    def coordinates_to_possible_set(
+            self, coordinates: Set[Tuple[int, int]]) -> Set[Set[int]]:
+        possible_set = set(
+            [self[coordinate].possible_values for coordinate in coordinates])
+        return possible_set
+
+    def update_cel_fixed(self, coordinate: Tuple[int, int]):
+        coordinate_sets = self.sets_dict[coordinate]
+        for coordinate_set in coordinate_sets:
+            fixed_numbers = self.coordinates_to_fixed_set(coordinate_set)
+            self[coordinate].update_with_fixed(fixed_numbers)
+
+    def update_cel_possible_values(self, coordinate: Tuple[int,int]):
+        coordinate_sets = self.sets_dict[coordinate]
+        for coordinate_set in coordinate_sets:
+            possible_numbers = self.coordinates_to_possible_set(coordinate_set)
+            self[coordinate].update_with_possible(possible_numbers)
+
