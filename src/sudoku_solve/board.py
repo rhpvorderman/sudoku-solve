@@ -14,7 +14,32 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with pytest-workflow.  If not, see <https://www.gnu.org/licenses/
 
-from typing import Set, Tuple
+from typing import Dict, List, Set, Tuple
+
+
+def squares_sets() -> List[Set[Tuple[int, int]]]:
+    sets = dict()
+    for x in range(9):
+        for y in range(9):
+            index_x = x // 3
+            index_y = y // 3
+            dict_index = str(index_x) + str(index_y)
+            if x % 3 == 0 and y % 3 == 0:
+                sets[dict_index] = set()
+            sets[dict_index].add((x, y))
+    return sets.values()
+
+
+SQUARES_SETS = squares_sets()
+
+
+def in_square_set(coordinate: Tuple[int,int]) -> Set[Tuple[int, int]]:
+    for square_set in SQUARES_SETS:
+        if coordinate in square_set:
+            return square_set
+        raise ValueError("{0} not found in {1}".format(
+            coordinate, SQUARES_SETS
+        ))
 
 
 class Cell(object):
@@ -50,10 +75,12 @@ class Cell(object):
 class Board(object):
     def __init__(self):
         self.matrix = [[Cell()] * 9 for i in range(9)]
+        self.sets_dict = self._create_sets_dict()
 
     def __getitem__(self, key: Tuple[int, int]):
         x, y = key
-        return self.matrix[x][y]
+        # Y selects the row, x the column. Makes sense right?
+        return self.matrix[y][x]
 
     def __str__(self):
         lines = []
@@ -66,3 +93,29 @@ class Board(object):
             lines.append(line_string + "|\n")
             lines.append(line_separator)
         return "".join(lines)
+
+    def get_row(self, index: int):
+        return self.matrix[index]
+
+    def get_column(self, index: int):
+        return [row[index] for row in self.matrix]
+
+    def _create_sets_dict(self) -> Dict[
+        Tuple[int, int], List[Set[Tuple[int, int]]]]:
+        sets_dict = dict()
+        for y, row in enumerate(self.matrix):
+            for x, cell in (enumerate(row)):
+                coordinate = (x, y)
+                row_set = set([(i, y) for i, row in enumerate(row)])
+                column_set = set(
+                    [(x, i) for i, column in enumerate(self.get_column(x))])
+                square_set = in_square_set(coordinate)
+                row_set.discard(coordinate)
+                column_set.discard(coordinate)
+                square_set.discard(coordinate)
+                sets_dict[coordinate] = [
+                    row_set,
+                    column_set,
+                    square_set
+                ]
+        return sets_dict
