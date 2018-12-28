@@ -44,7 +44,7 @@ class Cell(object):
             self.fixed_value = self.possible_values.copy().pop()
 
     def __str__(self):
-        return "" if self.fixed_value is None else str(self.fixed_value)
+        return " " if self.fixed_value is None else str(self.fixed_value)
 
 
 class Board(object):
@@ -57,13 +57,12 @@ class Board(object):
 
     def __str__(self):
         lines = []
-        line_separator = 9* "---" + "\n"
+        line_separator = 9 * "----" + "-\n"
         lines.append(line_separator)
         for row in self.matrix:
             line_string = ""
             for cell in row:
-                line_string += "|{0}|".format(cell)
-            lines.append(line_string + "\n")
+                line_string += "| {0} ".format(cell)
+            lines.append(line_string + "|\n")
             lines.append(line_separator)
         return "".join(lines)
-
