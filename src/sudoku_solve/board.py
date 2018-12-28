@@ -141,9 +141,36 @@ class Board(object):
             fixed_numbers = self.coordinates_to_fixed_set(coordinate_set)
             self[coordinate].update_with_fixed(fixed_numbers)
 
-    def update_cel_possible_values(self, coordinate: Tuple[int,int]):
+    def update_cel_possible_values(self, coordinate: Tuple[int, int]):
         coordinate_sets = self.sets_dict[coordinate]
         for coordinate_set in coordinate_sets:
             possible_numbers = self.coordinates_to_possible_set(coordinate_set)
             self[coordinate].update_with_possible(possible_numbers)
 
+    def solve_iteration(self):
+        for y, row in enumerate(self.matrix):
+            for x, cell in enumerate(row):
+                if cell.fixed_value is not None:
+                    self.update_cel_fixed((x, y))
+                if cell.fixed_value is not None:
+                    self.update_cel_possible_values((x, y))
+
+    def possible_numbers_left(self) -> int:
+        possible_numbers_left = 0
+        for row in self.matrix:
+            for cell in row:
+                if cell.fixed_value is None:
+                    possible_numbers_left += len(cell.possible_values)
+        return possible_numbers_left
+
+    def solve(self, max_iterations=1000):
+        possible_numbers_left = self.possible_numbers_left()
+        for iteration in max_iterations:
+            self.solve_iteration()
+            if self.possible_numbers_left() == 0:
+                return iteration
+            elif self.possible_numbers_left() == possible_numbers_left:
+                raise ValueError("Puzzle unsolvable from this point")
+            possible_numbers_left = self.possible_numbers_left()
+        raise ValueError(
+            "Puzzle not solvable in {0} iterations".format(max_iterations))
