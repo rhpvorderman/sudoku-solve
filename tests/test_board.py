@@ -21,4 +21,4 @@ def test_init():
     board = Board()
     assert len(board.matrix) == 9
     assert len(board.matrix[3]) == 9
-    assert board.matrix[3][4].fixed_value is None
+    assert board[3, 4].fixed_value is None

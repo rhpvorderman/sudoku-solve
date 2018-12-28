@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with pytest-workflow.  If not, see <https://www.gnu.org/licenses/
 
-from typing import Set
+from typing import Set, Tuple
 
 
 class Cell(object):
@@ -47,3 +47,7 @@ class Cell(object):
 class Board(object):
     def __init__(self):
         self.matrix = [[Cell()] * 9 for i in range(9)]
+
+    def __getitem__(self, key: Tuple[int, int]):
+        x, y = key
+        return self.matrix[x][y]
