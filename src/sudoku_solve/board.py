@@ -14,25 +14,37 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with pytest-workflow.  If not, see <https://www.gnu.org/licenses/
 
+from typing import Set
+
+
 class Cell(object):
     def __init__(self):
         # Possible values are 1-9
-        self.possible_values = set(range(1,9+1))
+        self.possible_values = set(range(1, 9 + 1))
         self.fixed_value = None
 
-    def update_with_fixed(self, fixed_set: set[int]):
+    def update_with_fixed(self, fixed_set: Set[int]):
         """"""
         self.possible_values -= fixed_set
+        self.fix_if_certain()
 
-    def update_with_possible(self, possible_set: set[set[int]]):
+    def update_with_possible(self, possible_set: Set[Set[int]]):
         possible_values_in_other_cells = {}
         for values in possible_set:
             possible_values_in_other_cells.update(values)
         must_be_one_of = self.possible_values - possible_values_in_other_cells
         if len(must_be_one_of) > 0:
             self.possible_values = must_be_one_of
+            self.fix_if_certain()
+
+    def fix_if_certain(self):
+        if self.fixed_value is not None and len(self.possible_values) == 1:
+            # Pop from a copy so self.possible_values will keep it's one
+            # element
+            self.fixed_value= self.possible_values.copy().pop()
 
 
 class Board(object):
     def __init__(self):
-        pass
+        self.matrix = [[Cell()] * 9 for i in range(9)]
+
