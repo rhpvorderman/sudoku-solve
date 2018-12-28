@@ -41,10 +41,9 @@ class Cell(object):
         if self.fixed_value is not None and len(self.possible_values) == 1:
             # Pop from a copy so self.possible_values will keep it's one
             # element
-            self.fixed_value= self.possible_values.copy().pop()
+            self.fixed_value = self.possible_values.copy().pop()
 
 
 class Board(object):
     def __init__(self):
         self.matrix = [[Cell()] * 9 for i in range(9)]
-
