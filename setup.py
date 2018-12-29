@@ -42,4 +42,7 @@ setup(
     install_requires=[
         "pyyaml"
     ],
+    entry_points={
+        'console-scripts': ['sudoku-solve=sudoku_solve.main:main']
+    }
 )
