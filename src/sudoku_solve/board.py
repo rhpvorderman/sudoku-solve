@@ -32,9 +32,6 @@ def squares_sets() -> List[Set[Tuple[int, int]]]:
     return sets.values()
 
 
-SQUARES_SETS = squares_sets()
-
-
 def in_square_set(coordinate: Tuple[int, int]) -> Set[Tuple[int, int]]:
     for square_set in squares_sets():
         if coordinate in square_set:
