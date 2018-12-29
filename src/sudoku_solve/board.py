@@ -64,7 +64,7 @@ class Cell(object):
 
     def update_with_possible(self, possible_list: List[Set[int]]):
         if self.fixed_value is None:
-            possible_values_in_other_cells = {}
+            possible_values_in_other_cells = set()
             for values in possible_list:
                 possible_values_in_other_cells.update(values)
             must_be_one_of = (self.possible_values -
