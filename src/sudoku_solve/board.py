@@ -53,7 +53,7 @@ class Cell(object):
     def set_value(self, value: int):
         if value not in set(range(1, 9 + 1)):
             raise ValueError("Value must be in range 1-9")
-        self.possible_values = set(value)
+        self.possible_values = set([value])
         self.fixed_value = value
 
     def update_with_fixed(self, fixed_set: Set[int]):
