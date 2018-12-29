@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with sudoku-solve.  If not, see <https://www.gnu.org/licenses/
 
+from typing import List, Set
+
 
 class Cell(object):
     def __init__(self):

@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with sudoku-solve.  If not, see <https://www.gnu.org/licenses/
 
-from sudoku_solve.board import Cell
+from sudoku_solve.cell import Cell
 
 
 def test_init():

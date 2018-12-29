@@ -18,6 +18,8 @@ from typing import Dict, List, Set, Tuple
 
 import yaml
 
+from .cell import Cell
+
 
 def squares_sets() -> List[Set[Tuple[int, int]]]:
     sets = dict()
