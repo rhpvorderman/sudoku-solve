@@ -62,10 +62,10 @@ class Cell(object):
             self.possible_values -= fixed_set
             self.fix_if_certain()
 
-    def update_with_possible(self, possible_set: Set[Set[int]]):
+    def update_with_possible(self, possible_list: List[Set[int]]):
         if self.fixed_value is None:
             possible_values_in_other_cells = {}
-            for values in possible_set:
+            for values in possible_list:
                 possible_values_in_other_cells.update(values)
             must_be_one_of = (self.possible_values -
                               possible_values_in_other_cells)
@@ -150,10 +150,9 @@ class Board(object):
         return fixed_set
 
     def coordinates_to_possible_set(
-            self, coordinates: Set[Tuple[int, int]]) -> Set[Set[int]]:
-        possible_set = set(
-            [self[coordinate].possible_values for coordinate in coordinates])
-        return possible_set
+            self, coordinates: Set[Tuple[int, int]]) -> List[Set[int]]:
+        possible_list = [self[x, y].possible_values for x, y in coordinates]
+        return possible_list
 
     def update_cel_fixed(self, coordinate: Tuple[int, int]):
         coordinate_sets = self.sets_dict[coordinate]
