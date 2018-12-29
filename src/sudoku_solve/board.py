@@ -85,7 +85,7 @@ class Cell(object):
 
 class Board(object):
     def __init__(self):
-        self.matrix = [[Cell()] * 9 for i in range(9)]
+        self.matrix = [[Cell() for i in range(9)] for j in range(9)]
         self.sets_dict = self._create_sets_dict()
 
     def __getitem__(self, key: Tuple[int, int]):
