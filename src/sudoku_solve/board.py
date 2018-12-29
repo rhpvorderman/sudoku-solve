@@ -183,12 +183,12 @@ class Board(object):
                     possible_numbers_left += len(cell.possible_values)
         return possible_numbers_left
 
-    def solve(self, max_iterations=1000):
+    def solve(self, max_iterations=100):
         possible_numbers_left = self.possible_numbers_left()
-        for iteration in max_iterations:
+        for iteration in range(max_iterations):
             self.solve_iteration()
             if self.possible_numbers_left() == 0:
-                return iteration
+                return iteration + 1
             elif self.possible_numbers_left() == possible_numbers_left:
                 raise ValueError("Puzzle unsolvable from this point")
             possible_numbers_left = self.possible_numbers_left()

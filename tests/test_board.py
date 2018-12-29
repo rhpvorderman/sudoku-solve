@@ -15,6 +15,7 @@
 # along with pytest-workflow.  If not, see <https://www.gnu.org/licenses/
 
 import textwrap
+from pathlib import Path
 
 from sudoku_solve.board import Board
 
@@ -40,3 +41,11 @@ def test_from_yaml():
     assert board[0, 7].fixed_value == 6
     assert board[4, 2].fixed_value == 7
     assert board[0, 0].fixed_value is None
+
+
+def test_solve():
+    easy_sudoku = Path(__file__).parent / Path("sudokus") / Path("easy.yml")
+    with easy_sudoku.open() as easy:
+        board = Board.from_yaml(easy)
+    board.solve()
+    assert board.possible_numbers_left() == 0
