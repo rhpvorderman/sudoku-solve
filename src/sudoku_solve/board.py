@@ -16,6 +16,7 @@
 
 from typing import Dict, List, Set, Tuple
 
+import yaml
 
 def squares_sets() -> List[Set[Tuple[int, int]]]:
     sets = dict()
@@ -47,6 +48,12 @@ class Cell(object):
         # Possible values are 1-9
         self.possible_values = set(range(1, 9 + 1))
         self.fixed_value = None
+
+    def set_value(self, value: int):
+        if value not in set(range(1, 9 + 1)):
+            raise ValueError("Value must be in range 1-9")
+        self.possible_values = set(value)
+        self.fixed_value = value
 
     def update_with_fixed(self, fixed_set: Set[int]):
         """"""
@@ -81,8 +88,7 @@ class Board(object):
 
     def __getitem__(self, key: Tuple[int, int]):
         x, y = key
-        # Y selects the row, x the column. Makes sense right?
-        return self.matrix[y][x]
+        return self.matrix[x][y]
 
     def __str__(self):
         lines = []
@@ -95,6 +101,18 @@ class Board(object):
             lines.append(line_string + "|\n")
             lines.append(line_separator)
         return "".join(lines)
+
+    @classmethod
+    def from_dict(cls,dictionary: Dict[int, Dict[int, int]]):
+        board = cls.__init__()
+        for x, y_dictionary in dictionary.items():
+            for y, value in y_dictionary.items():
+                board[x,y].set_value(value)
+        return board
+
+    @classmethod
+    def from_yaml(cls, yaml_string: str):
+        return cls.from_dict(yaml.safe_load(yaml_string))
 
     def get_row(self, index: int):
         return self.matrix[index]
