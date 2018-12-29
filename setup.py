@@ -43,6 +43,6 @@ setup(
         "pyyaml"
     ],
     entry_points={
-        'console-scripts': ['sudoku-solve=sudoku_solve.main:main']
+        'console_scripts': ['sudoku-solve=sudoku_solve.main:main']
     }
 )

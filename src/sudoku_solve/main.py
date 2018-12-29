@@ -23,7 +23,7 @@ from .board import Board
 def argument_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("i", "--input_yaml", type=Path, required=True)
+    parser.add_argument("-i", "--input_yaml", type=Path, required=True)
 
     return parser
 
@@ -32,7 +32,8 @@ def main():
     args = argument_parser().parse_args()
     with args.input_yaml.open() as yaml_file:
         board = Board.from_yaml(yaml_file)
-    board.solve()
+    number_of_iterations = board.solve()
+    print("number of iterations: " + str(number_of_iterations))
     print(board)
 
 
