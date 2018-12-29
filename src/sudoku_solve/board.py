@@ -123,12 +123,12 @@ class Board(object):
     def _create_sets_dict(self) -> Dict[
         Tuple[int, int], List[Set[Tuple[int, int]]]]:
         sets_dict = dict()
-        for y, row in enumerate(self.matrix):
-            for x, cell in (enumerate(row)):
+        for x, row in enumerate(self.matrix):
+            for y, cell in (enumerate(row)):
                 coordinate = (x, y)
-                row_set = set([(i, y) for i, row in enumerate(row)])
+                row_set = set([(x, i) for i, _ in enumerate(row)])
                 column_set = set(
-                    [(x, i) for i, column in enumerate(self.get_column(x))])
+                    [(i, y) for i, column in enumerate(self.get_column(x))])
                 square_set = in_square_set(coordinate)
                 row_set.discard(coordinate)
                 column_set.discard(coordinate)
@@ -166,8 +166,8 @@ class Board(object):
             self[coordinate].update_with_possible(possible_numbers)
 
     def solve_iteration(self):
-        for y, row in enumerate(self.matrix):
-            for x, cell in enumerate(row):
+        for x, row in enumerate(self.matrix):
+            for y, cell in enumerate(row):
                 if cell.fixed_value is not None:
                     self.update_cel_fixed((x, y))
                 if cell.fixed_value is not None:
