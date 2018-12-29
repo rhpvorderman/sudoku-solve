@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with pytest-workflow.  If not, see <https://www.gnu.org/licenses/
 
+import textwrap
+
 from sudoku_solve.board import Board
 
 
@@ -22,3 +24,19 @@ def test_init():
     assert len(board.matrix) == 9
     assert len(board.matrix[3]) == 9
     assert board[3, 4].fixed_value is None
+
+
+def test_from_yaml():
+    board = Board.from_yaml(textwrap.dedent(
+        """\
+        0:
+          2: 5
+          7: 6
+        4:
+          2: 7
+        """)
+    )
+    assert board[0, 2].fixed_value == 5
+    assert board[0, 7].fixed_value == 6
+    assert board[4, 2].fixed_value == 7
+    assert board[0, 0].fixed_value is None

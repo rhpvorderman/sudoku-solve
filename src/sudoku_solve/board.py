@@ -18,6 +18,7 @@ from typing import Dict, List, Set, Tuple
 
 import yaml
 
+
 def squares_sets() -> List[Set[Tuple[int, int]]]:
     sets = dict()
     for x in range(9):
@@ -35,12 +36,12 @@ SQUARES_SETS = squares_sets()
 
 
 def in_square_set(coordinate: Tuple[int, int]) -> Set[Tuple[int, int]]:
-    for square_set in SQUARES_SETS:
+    for square_set in squares_sets():
         if coordinate in square_set:
             return square_set
-        raise ValueError("{0} not found in {1}".format(
-            coordinate, SQUARES_SETS
-        ))
+    raise ValueError("{0} not found in {1}".format(
+        coordinate, squares_sets()
+    ))
 
 
 class Cell(object):
@@ -57,22 +58,23 @@ class Cell(object):
 
     def update_with_fixed(self, fixed_set: Set[int]):
         """"""
-        if self.fixed_value is not None:
+        if self.fixed_value is None:
             self.possible_values -= fixed_set
             self.fix_if_certain()
 
     def update_with_possible(self, possible_set: Set[Set[int]]):
-        if self.fixed_value is not None:
+        if self.fixed_value is None:
             possible_values_in_other_cells = {}
             for values in possible_set:
                 possible_values_in_other_cells.update(values)
-            must_be_one_of = self.possible_values - possible_values_in_other_cells
+            must_be_one_of = (self.possible_values -
+                              possible_values_in_other_cells)
             if len(must_be_one_of) > 0:
                 self.possible_values = must_be_one_of
                 self.fix_if_certain()
 
     def fix_if_certain(self):
-        if self.fixed_value is not None and len(self.possible_values) == 1:
+        if self.fixed_value is None and len(self.possible_values) == 1:
             # Pop from a copy so self.possible_values will keep it's one
             # element
             self.fixed_value = self.possible_values.copy().pop()
@@ -103,11 +105,11 @@ class Board(object):
         return "".join(lines)
 
     @classmethod
-    def from_dict(cls,dictionary: Dict[int, Dict[int, int]]):
-        board = cls.__init__()
+    def from_dict(cls, dictionary: Dict[int, Dict[int, int]]):
+        board = cls()
         for x, y_dictionary in dictionary.items():
             for y, value in y_dictionary.items():
-                board[x,y].set_value(value)
+                board[x, y].set_value(value)
         return board
 
     @classmethod
@@ -120,8 +122,8 @@ class Board(object):
     def get_column(self, index: int):
         return [row[index] for row in self.matrix]
 
-    def _create_sets_dict(self) -> Dict[
-        Tuple[int, int], List[Set[Tuple[int, int]]]]:
+    def _create_sets_dict(self) -> Dict[Tuple[int, int],
+                                        List[Set[Tuple[int, int]]]]:
         sets_dict = dict()
         for x, row in enumerate(self.matrix):
             for y, cell in (enumerate(row)):
@@ -168,9 +170,9 @@ class Board(object):
     def solve_iteration(self):
         for x, row in enumerate(self.matrix):
             for y, cell in enumerate(row):
-                if cell.fixed_value is not None:
+                if cell.fixed_value is None:
                     self.update_cel_fixed((x, y))
-                if cell.fixed_value is not None:
+                if cell.fixed_value is None:
                     self.update_cel_possible_values((x, y))
 
     def possible_numbers_left(self) -> int:
