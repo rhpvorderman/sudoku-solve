@@ -21,28 +21,6 @@ import yaml
 from .cell import Cell
 
 
-def squares_sets() -> List[Set[Tuple[int, int]]]:
-    sets = dict()
-    for x in range(9):
-        for y in range(9):
-            index_x = x // 3
-            index_y = y // 3
-            dict_index = str(index_x) + str(index_y)
-            if x % 3 == 0 and y % 3 == 0:
-                sets[dict_index] = set()
-            sets[dict_index].add((x, y))
-    return sets.values()
-
-
-def in_square_set(coordinate: Tuple[int, int]) -> Set[Tuple[int, int]]:
-    for square_set in squares_sets():
-        if coordinate in square_set:
-            return square_set
-    raise ValueError("{0} not found in {1}".format(
-        coordinate, squares_sets()
-    ))
-
-
 class Board(object):
     def __init__(self):
         self.matrix = [[Cell() for i in range(9)] for j in range(9)]
@@ -91,7 +69,7 @@ class Board(object):
                 row_set = set([(x, i) for i, _ in enumerate(row)])
                 column_set = set(
                     [(i, y) for i, column in enumerate(self.column(x))])
-                square_set = in_square_set(coordinate)
+                square_set = self.in_square_set(coordinate)
                 row_set.discard(coordinate)
                 column_set.discard(coordinate)
                 square_set.discard(coordinate)
@@ -153,3 +131,25 @@ class Board(object):
             possible_numbers_left = self.possible_numbers_left()
         raise ValueError(
             "Puzzle not solvable in {0} iterations".format(max_iterations))
+
+    @staticmethod
+    def squares_sets() -> List[Set[Tuple[int, int]]]:
+        sets = dict()
+        for x in range(9):
+            for y in range(9):
+                index_x = x // 3
+                index_y = y // 3
+                dict_index = str(index_x) + str(index_y)
+                if x % 3 == 0 and y % 3 == 0:
+                    sets[dict_index] = set()
+                sets[dict_index].add((x, y))
+        return sets.values()
+
+    def in_square_set(self,
+                      coordinate: Tuple[int, int]) -> Set[Tuple[int, int]]:
+        for square_set in self.squares_sets():
+            if coordinate in square_set:
+                return square_set
+        raise ValueError("{0} not found in {1}".format(
+            coordinate, self.squares_sets()
+        ))
