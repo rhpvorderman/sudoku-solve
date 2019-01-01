@@ -76,10 +76,10 @@ class Board(object):
     def from_yaml(cls, yaml_string: str):
         return cls.from_dict(yaml.safe_load(yaml_string))
 
-    def get_row(self, index: int):
+    def row(self, index: int):
         return self.matrix[index]
 
-    def get_column(self, index: int):
+    def column(self, index: int):
         return [row[index] for row in self.matrix]
 
     def _create_sets_dict(self) -> Dict[Tuple[int, int],
@@ -90,7 +90,7 @@ class Board(object):
                 coordinate = (x, y)
                 row_set = set([(x, i) for i, _ in enumerate(row)])
                 column_set = set(
-                    [(i, y) for i, column in enumerate(self.get_column(x))])
+                    [(i, y) for i, column in enumerate(self.column(x))])
                 square_set = in_square_set(coordinate)
                 row_set.discard(coordinate)
                 column_set.discard(coordinate)
