@@ -1,0 +1,29 @@
+language: python
+install:
+  - pip install tox
+  - pip install codacy-coverage
+  - pip install codecov
+matrix:
+  include:
+    # Test most recent editions of python 3
+    - python: 3.5
+      env: TOX_ENV=py35
+    - python: 3.6
+      env: TOX_ENV=py36
+    - python: 3.7
+      dist: xenial
+      env: TOX_ENV=py37
+script:
+    - tox -e $TOX_ENV
+
+after_success:
+  # Correct coverage xml for coverage services.
+  - >
+    bash -c 'set -eux;
+    pkg_path=$(find .tox/py*/lib/python*/site-packages/sudoku_solve -maxdepth 0 -type d);
+    sed -i "s:${pkg_path}:src/sudoku_solve:g" coverage.xml'
+  - >
+    bash -c ' if [[ -v CODACY_PROJECT_TOKEN ]]; then
+    python-codacy-coverage -r coverage.xml;
+    fi'
+- codecov
